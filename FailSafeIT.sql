@@ -28,6 +28,11 @@ GO
 USE FailSafeIT;
 GO
 
+
+
+-- TODO: ON DELETE SET NULL ???
+-- TODO: NON-CLUSTERED INDEX on FOREIGN KEYS ???
+
 -- SETUP - Steg 2: Skapa tabeller
 -- Exporterad kod från Lucidchart, med ett fåtal ändringar
 CREATE TABLE [Consultants] (
@@ -140,13 +145,23 @@ SELECT FirstName, LastName, HourlyRate
 -- Fråga B: Visa en sammanställning över alla uppdrag. Listan måste innehålla
 -- kundens företagsnamn, konsultens namn, samt start- och slutdatum för
 -- uppdraget (Tips: Använd JOIN).
-
+SELECT p.Name as [Project Name], cl.CompanyName, co.FirstName, co.LastName, a.RoleDescription, a.StartDate, a.EndDate
+    FROM Assignments a
+    LEFT JOIN Consultants co ON co.Id = a.ConsultantId
+    INNER JOIN Projects p ON p.Id = a.ProjectId
+    INNER JOIN Clients cl ON cl.Id = p.ClientId;
 
 -- Fråga C: Visa en lista på alla kunder och hur många uppdrag respektive kund
 -- har aktiva i systemet totalt (Tips: Använd COUNT och GROUP BY).
 
+SELECT c.CompanyName, COUNT(a.ConsultantId) as [Number of Assignments], COUNT(DISTINCT p.Id) as [Number of Projects]
+    FROM Clients c
+    LEFT JOIN Projects p ON p.ClientId = c.Id
+    LEFT JOIN Assignments a ON a.ProjectId = p.Id
+    GROUP BY c.CompanyName
+    ORDER BY COUNT(a.ConsultantId) DESC;
 
---Fråga D: Uppdatera timpriset för en specifik konsult genom en UPDATE-fråga.
+-- Fråga D: Uppdatera timpriset för en specifik konsult genom en UPDATE-fråga.
 
 
 -- Fråga E: Skriv en DELETE-fråga som tar bort en kund (förutsatt att kunden inte
