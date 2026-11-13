@@ -162,10 +162,14 @@ SELECT c.CompanyName, COUNT(a.ConsultantId) as [Number of Assignments], COUNT(DI
     ORDER BY COUNT(a.ConsultantId) DESC;
 
 -- Fråga D: Uppdatera timpriset för en specifik konsult genom en UPDATE-fråga.
-
+-- Vonny höjer sitt timpris
+UPDATE Consultants SET HourlyRate = 1250.00
+    WHERE Id = 1;
 
 -- Fråga E: Skriv en DELETE-fråga som tar bort en kund (förutsatt att kunden inte
 -- har några aktiva uppdrag kopplade till sig).
+
+
 
 select * from Consultants;
 select * from Clients;
