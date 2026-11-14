@@ -34,46 +34,50 @@ GO
 -- TODO: NON-CLUSTERED INDEX on FOREIGN KEYS ???
 
 -- SETUP - Steg 2: Skapa tabeller
--- Exporterad kod från Lucidchart, med ett fåtal ändringar
-CREATE TABLE [Consultants] (
-    [Id] INT PRIMARY KEY IDENTITY(1,1),
-    [PersonalNumber] VARCHAR(20) UNIQUE NOT NULL,
-    [FirstName] NVARCHAR(40) NOT NULL,
-    [LastName] NVARCHAR(40) NOT NULL,
-    [HourlyRate] DECIMAL(7,2) NOT NULL,
-    [Specialty] NVARCHAR(100)
+-- Exporterad kod från Lucidchart, med ändringar
+CREATE TABLE Consultants (
+    Id INT IDENTITY(1,1) NOT NULL,
+    PersonalNumber VARCHAR(20) NOT NULL,
+    FirstName NVARCHAR(40) NOT NULL,
+    LastName NVARCHAR(40) NOT NULL,
+    HourlyRate DECIMAL(7,2) NOT NULL,
+    Specialty NVARCHAR(100) DEFAULT NULL,
+    CONSTRAINT PK_Consultants PRIMARY KEY CLUSTERED (Id),
+    CONSTRAINT UQ_PersonalNumber UNIQUE (PersonalNumber)
 );
 
-CREATE TABLE [Clients] (
-    [Id] INT PRIMARY KEY IDENTITY(1,1),
-    [OrgNumber] VARCHAR(20) UNIQUE NOT NULL,
-    [CompanyName] NVARCHAR(120) NOT NULL,
-    [Email] NVARCHAR(200) NOT NULL,
-    [Phone] VARCHAR(20) NOT NULL
+CREATE TABLE Clients (
+    Id INT IDENTITY(1,1) NOT NULL,
+    OrgNumber VARCHAR(20) NOT NULL,
+    CompanyName NVARCHAR(120) NOT NULL,
+    Email NVARCHAR(200) NOT NULL,
+    Phone VARCHAR(20) NOT NULL,
+    CONSTRAINT PK_Clients PRIMARY KEY CLUSTERED (Id),
+    CONSTRAINT UQ_OrgNumber UNIQUE (OrgNumber)
 );
 
-CREATE TABLE [Projects] (
-    [Id] INT PRIMARY KEY IDENTITY(1,1),
-    [ClientId] INT,
-    [Name] NVARCHAR(120) NOT NULL,
-    CONSTRAINT [FK_Projects_ClientId]
-        FOREIGN KEY ([ClientId])
-            REFERENCES [Clients]([Id])
+CREATE TABLE Projects (
+    Id INT IDENTITY(1,1) NOT NULL,
+    ClientId INT NOT NULL,
+    Name NVARCHAR(120) NOT NULL,
+    CONSTRAINT PK_Projects PRIMARY KEY CLUSTERED (Id),
+    CONSTRAINT FK_Projects_Clients
+        FOREIGN KEY (ClientId) REFERENCES Clients (Id)
 );
 
-CREATE TABLE [Assignments] (
-    [ProjectId] INT,
-    [ConsultantId] INT,
-    [StartDate] DATETIME2 NOT NULL,
-    [EndDate] DATETIME2 NOT NULL,
-    [RoleDescription] NVARCHAR(120),
-    PRIMARY KEY ([ProjectId], [ConsultantId]),
-    CONSTRAINT [FK_Assignments_ConsultantId]
-        FOREIGN KEY ([ConsultantId])
-            REFERENCES [Consultants]([Id]),
-    CONSTRAINT [FK_Assignments_ProjectId]
-        FOREIGN KEY ([ProjectId])
-            REFERENCES [Projects]([Id])
+CREATE TABLE Assignments (
+    ProjectId INT NOT NULL,
+    ConsultantId INT NOT NULL,
+    StartDate DATETIME2 NOT NULL,
+    EndDate DATETIME2 NOT NULL,
+    RoleDescription NVARCHAR(120) NOT NULL,
+    PRIMARY KEY (ProjectId, ConsultantId),
+    CONSTRAINT FK_Assignments_Consultants
+        FOREIGN KEY (ConsultantId)
+            REFERENCES Consultants(Id),
+    CONSTRAINT FK_Assignments_Projects
+        FOREIGN KEY (ProjectId)
+            REFERENCES Projects(Id)
 );
 
 -- SETUP - Steg 3: Lägg in testdata
@@ -168,7 +172,7 @@ UPDATE Consultants SET HourlyRate = 1250.00
 
 -- Fråga E: Skriv en DELETE-fråga som tar bort en kund (förutsatt att kunden inte
 -- har några aktiva uppdrag kopplade till sig).
-
+DELETE FROM Clients WHERE Id = 3;
 
 
 select * from Consultants;
