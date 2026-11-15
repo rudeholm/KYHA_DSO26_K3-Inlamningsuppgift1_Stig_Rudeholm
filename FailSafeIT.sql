@@ -33,6 +33,7 @@ GO
 -- TODO: ON DELETE SET NULL ???
 -- TODO: NON-CLUSTERED INDEX on FOREIGN KEYS ???
 
+
 -- SETUP - Steg 2: Skapa tabeller
 -- Exporterad kod från Lucidchart, med ändringar
 CREATE TABLE Consultants (
@@ -58,26 +59,27 @@ CREATE TABLE Clients (
 
 CREATE TABLE Projects (
     Id INT IDENTITY(1,1) NOT NULL,
-    ClientId INT NOT NULL,
+    ClientId INT,
     Name NVARCHAR(120) NOT NULL,
     CONSTRAINT PK_Projects PRIMARY KEY CLUSTERED (Id),
     CONSTRAINT FK_Projects_Clients
-        FOREIGN KEY (ClientId) REFERENCES Clients (Id)
+        FOREIGN KEY (ClientId) REFERENCES Clients (Id) ON DELETE SET NULL
 );
 
 CREATE TABLE Assignments (
-    ProjectId INT NOT NULL,
-    ConsultantId INT NOT NULL,
+    Id INT IDENTITY(1,1) NOT NULL,
+    ProjectId INT,
+    ConsultantId INT,
     StartDate DATETIME2 NOT NULL,
     EndDate DATETIME2 NOT NULL,
     RoleDescription NVARCHAR(120) NOT NULL,
-    PRIMARY KEY (ProjectId, ConsultantId),
-    CONSTRAINT FK_Assignments_Consultants
-        FOREIGN KEY (ConsultantId)
-            REFERENCES Consultants(Id),
+    CONSTRAINT PK_Assignments PRIMARY KEY CLUSTERED (Id),
     CONSTRAINT FK_Assignments_Projects
         FOREIGN KEY (ProjectId)
-            REFERENCES Projects(Id)
+            REFERENCES Projects (Id) ON DELETE SET NULL,
+    CONSTRAINT FK_Assignments_Consultants
+        FOREIGN KEY (ConsultantId)
+            REFERENCES Consultants (Id) ON DELETE SET NULL,
 );
 
 -- SETUP - Steg 3: Lägg in testdata
@@ -157,7 +159,6 @@ SELECT p.Name as [Project Name], cl.CompanyName, co.FirstName, co.LastName, a.Ro
 
 -- Fråga C: Visa en lista på alla kunder och hur många uppdrag respektive kund
 -- har aktiva i systemet totalt (Tips: Använd COUNT och GROUP BY).
-
 SELECT c.CompanyName, COUNT(a.ConsultantId) as [Number of Assignments], COUNT(DISTINCT p.Id) as [Number of Projects]
     FROM Clients c
     LEFT JOIN Projects p ON p.ClientId = c.Id
