@@ -30,10 +30,6 @@ GO
 
 
 
--- TODO: ON DELETE SET NULL ???
--- TODO: NON-CLUSTERED INDEX on FOREIGN KEYS ???
-
-
 -- SETUP - Steg 2: Skapa tabeller
 -- Exporterad kod från Lucidchart, med ändringar
 CREATE TABLE Consultants (
@@ -81,6 +77,17 @@ CREATE TABLE Assignments (
         FOREIGN KEY (ConsultantId)
             REFERENCES Consultants (Id) ON DELETE SET NULL,
 );
+
+-- Lägg till NONCLUSTERED INDEX på Foreing Keys för att underlätta sökning
+CREATE NONCLUSTERED INDEX IX_Projects_ClientId
+    ON Projects (ClientId);
+GO
+
+CREATE NONCLUSTERED INDEX IX_Assignments_ConsultantId
+    ON Assignments (ConsultantId)
+        INCLUDE (ProjectId);
+GO
+
 
 -- SETUP - Steg 3: Lägg in testdata
 -- Konsulter och klienter genererade med mockaroo.com, med små ändringar
