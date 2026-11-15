@@ -78,7 +78,7 @@ CREATE TABLE Assignments (
             REFERENCES Consultants (Id) ON DELETE SET NULL,
 );
 
--- Lägg till NONCLUSTERED INDEX på Foreing Keys för att underlätta sökning
+-- Lägg till NONCLUSTERED INDEX för att underlätta sökning
 CREATE NONCLUSTERED INDEX IX_Projects_ClientId
     ON Projects (ClientId);
 GO
@@ -86,6 +86,14 @@ GO
 CREATE NONCLUSTERED INDEX IX_Assignments_ConsultantId
     ON Assignments (ConsultantId)
         INCLUDE (ProjectId);
+GO
+
+CREATE NONCLUSTERED INDEX IX_Clients_OrgNumber
+    ON Clients (OrgNumber);
+GO
+
+CREATE NONCLUSTERED INDEX IX_Consultants_PersonalNumber
+    ON Consultants (PersonalNumber);
 GO
 
 
@@ -182,8 +190,3 @@ UPDATE Consultants SET HourlyRate = 1250.00
 -- har några aktiva uppdrag kopplade till sig).
 DELETE FROM Clients WHERE Id = 3;
 
-
-select * from Consultants;
-select * from Clients;
-select * from Projects;
-select * from Assignments;

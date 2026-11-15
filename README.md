@@ -14,3 +14,13 @@ Min design uppfyller 1NF, 2NF, och 3NF därför att:
 - Inga tabeller innehåller "repeterande grupper" av data.
 - Varje tabell är fokuserad och innehåller bara kolumner som är relevanta för respektive nyckel.
 - Alla kolumner är beroende av sin tabells primärnyckel och ingenting annat.
+
+---
+
+> **Sec:** Om din databas nås via en publik webbapplikation, på vilket sätt skyddar du systemet så att en angripare inte kan skriva skadlig SQL-kod i ett inmatningsfält och radera hela din databas (SQL Injection)?
+
+Svar: Arbeta alltid utifrån antagandet att användar-input är potentiellt skadlig. Använd parameteriserade SQL-frågor så att användar-input behandlas som sträng-literaler istället för exekverbar kod.
+
+> **Ops:** Om FailSafe IT växer till tusentals kunder och miljontals uppdrag, vilken databasfunktion bör du implementera på tabellerna för att säkerställa att sökningar efter specifika organisationsnummer fortfarande går blixtsnabbt?
+
+Svar: Använd t.ex. `NONCLUSTERED INDEX` för att undvika onödiga genomsökningar av hela tabeller.
